@@ -8,16 +8,18 @@ from scopesim.source import spectrum_templates as st
 FILTER_DEFAULTS = tcu.FILTER_DEFAULTS
 
 
-def for_magnitude_in_filter(filter_name, magnitude,
-                            instrument=None, observatory=None):
+def for_flux_in_filter(filter_name, flux, instrument=None, observatory=None):
     """
     Returns the number of photons in a given filter at a given magnitude
+
+    Filter anme, instrument, and observatory are as per the Spanish VO filter
+    service name
 
     Parameters
     ----------
     filter_name : str
-    magnitude : float, Quantity
-        [vega mag or AB mag]
+    flux : float, Quantity
+        [vega mag, AB mag, Jy] If float, Vega mag is assumed
     instrument : str, optional
     observatory : str, optional
 
@@ -28,20 +30,23 @@ def for_magnitude_in_filter(filter_name, magnitude,
 
     Examples
     --------
-    ::
-        >>> from astropy import units as u
-        >>> import hmbp
-
     Find the number of photons emitted by Vega in V band [ph s-1 m-2]::
 
-        >>> hmbp.in_vega_spectrum("V")
+        >>> from astropy import units as u
+        >>> import hmbp
+        >>>
+        >>> hmbp.in_zero_vega_mags("V")
 
     Find the number of photons emitted by a Ks=20 [ABmag] point source through
     the HAWKI Ks filter::
 
-        >>> hmbp.for_magnitude_in_filter("Ks", 20*u.ABmag,
+        >>> hmbp.for_flux_in_filter("Ks", 20*u.ABmag,
                                          observatory="Paranal",
                                          instrument="HAWKI")
+
+    See Also
+    --------
+    http://svo2.cab.inta-csic.es/theory/fps/
 
     """
 
@@ -52,36 +57,93 @@ def for_magnitude_in_filter(filter_name, magnitude,
         svo_str = f"{observatory}/{instrument}.{filter_name}"
 
     spec_template = st.vega_spectrum
-    if isinstance(magnitude, u.Quantity):
-        if magnitude.unit == u.ABmag:
+    if isinstance(flux, u.Quantity):
+        if flux.unit.physical_type == "spectral flux density":             # ABmag and Jy
             spec_template = st.ab_spectrum
-        magnitude = magnitude.value
+            flux = flux.to(u.ABmag)
+        flux = flux.value
 
-    spec = spec_template(magnitude)
+    spec = spec_template(flux)
     filt = tcu.download_svo_filter(svo_str)
     wave = filt.waveset
     dwave = 0.5 * (np.r_[[0], np.diff(wave)] + np.r_[np.diff(wave), [0]])
 
     flux = spec(wave)  # ph/s/cm2/AA
     flux *= filt(wave) * dwave  # ph/s
-    n_ph = np.sum(flux.to(u.ph / u.s / u.m ** 2).value)
-
-    # print(f"\nVega spectrum over the {filter_name} band "
-    #       f"({filter_name}=0mag) has a flux of "
-    #       f"{int(n_ph * 1e-6)}e6 ph/s/m2")
+    n_ph = np.sum(flux.to(u.ph / u.s / u.m ** 2))
 
     return n_ph
 
 
-def in_vega_spectrum(filter_name, instrument=None, observatory=None):
-    return for_magnitude_in_filter(filter_name, 0, instrument, observatory)
+def in_zero_vega_mags(filter_name, instrument=None, observatory=None):
+    return for_flux_in_filter(filter_name, 0, instrument, observatory)
 
 
-in_vega_spectrum.__doc__ = for_magnitude_in_filter.__doc__
+def in_zero_AB_mags(filter_name, instrument=None, observatory=None):
+    return for_flux_in_filter(filter_name, 0 * u.ABmag, instrument, observatory)
 
 
-def in_ab_spectrum(filter_name, instrument=None, observatory=None):
-    return for_magnitude_in_filter(filter_name, 0*u.ABmag, instrument, observatory)
+def in_one_jansky(filter_name, instrument=None, observatory=None):
+    return for_flux_in_filter(filter_name, 1 * u.Jy, instrument, observatory)
 
 
-in_ab_spectrum.__doc__ = for_magnitude_in_filter.__doc__
+in_zero_vega_mags.__doc__ = for_flux_in_filter.__doc__
+in_zero_AB_mags.__doc__ = for_flux_in_filter.__doc__
+in_one_jansky.__doc__ = for_flux_in_filter.__doc__
+
+
+def convert(from_quantity, to_unit, filter_name,
+            instrument=None, observatory=None):
+    """
+    Converts units within a certain instrument filters
+
+    If ``filter_name`` is not a generic name as listed in
+    ``hmbp.FILTER_DEFAULTS``, the instrument and observatory must be given as
+    per the name definitions in the Spanish VO filter service.
+
+    Parameters
+    ----------
+    from_quantity : astropy.Quantity
+        [u.mag, u.ABmag, u.Jy] The flux quantity to convert
+    to_unit : astropy.Unit
+        [u.mag, u.ABmag, u.Jy] The Unit to convert flux to
+    filter_name: str
+    instrument: str, optional
+    observatory: str, optional
+
+    Returns
+    -------
+    new_flux : astropy.Quantity
+        FLux is units of ``to_unit``
+
+    Examples
+    --------
+    Convert from Vega magnitudes to Jansky in the NACO M-prime filter::
+
+        >>> from astropy import units as u
+        >>> import hmbp
+        >>>
+        >>> hmbp.convert(20 * u.mag, u.Jy, filter_name="Mp",
+        >>>              observatory="Paranal", instrument="NACO")
+
+
+    See Also
+    --------
+    http://svo2.cab.inta-csic.es/theory/fps/
+
+    """
+
+    base_fn = {u.mag: in_zero_vega_mags,
+               u.ABmag: in_zero_AB_mags,
+               u.Jy: in_one_jansky}[to_unit]
+    to_phs = base_fn(filter_name, instrument, observatory)
+    from_phs = for_flux_in_filter(filter_name, from_quantity, instrument,
+                                  observatory)
+
+    scale_factor = (from_phs / to_phs).value
+    if to_unit in [u.mag, u.ABmag]:
+        scale_factor = -2.5 * np.log10(scale_factor)
+
+    new_flux = scale_factor * to_unit
+
+    return new_flux

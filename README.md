@@ -14,16 +14,16 @@ Tiny repo to calculate astronomical photon counts for various instruments
 ```
 
 Find the number of photons emitted by Vega in V band [ph s-1 m-2]::
-         
+
 ```python
->>> hmbp.in_vega_spectrum("V")
+>> > hmbp.in_zero_vega_mags("V")
 ```
 
 Find the number of photons emitted by a Ks=20 [ABmag] point source through
 the HAWKI Ks filter::
-    
+
 ```python
->>> hmbp.for_magnitude_in_filter("Ks", 20*u.ABmag, 
-                                 observatory="Paranal", 
-                                 instrument="HAWKI")
+>> > hmbp.for_flux_in_filter("Ks", 20 * u.ABmag,
+                             observatory="Paranal",
+                             instrument="HAWKI")
 ```
