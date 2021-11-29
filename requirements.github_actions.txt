@@ -1,0 +1,7 @@
+pytest
+pyyaml
+numpy
+astropy
+synphot
+skycalc_ipy
+scopesim
