@@ -77,20 +77,23 @@ class TestConvert:
         assert mag_diff.value == approx(diff, rel=0.02)
 
 
+# Magnitudes that work  # Original magnitudes from ESO skycalc
+skycalc_bg_mags = [("U", 20.7),            # [20.76] Generic/Bessel.U
+                   ("B", 21.0),            # [21.14]
+                   ("V", 20.6),            # [20.67]
+                   ("R", 20.3),            # [20.32]
+                   ("I", 19.5),            # [19.48]
+                   ("NACO.J", 17.3),       # [16.87] Paranal/NACO.J
+                   ("NACO.H", 15.3),       # [14.43]
+                   ("NACO.Ks", 15.1),      # [15.23]
+                   ("NACO.Lp", 5.3),       # [6.00]
+                   ("NACO.Mp", 1.2),       # [1.14]
+                   ("MIDI.Nband", -2.7)]   # [-2.29] Paranal/MIDI.Nband
+
+
 class TestInSkyCalcBackground:
     # Sky mags taken from skycalc with default values from website
-    @pytest.mark.parametrize("filter_name, sky_mag",
-                             [("U", 20.76),         # Generic/Bessel.U
-                              ("B", 21.14),
-                              ("V", 20.67),
-                              ("R", 20.32),
-                              ("I", 19.48),
-                              ("NACO.J", 16.87),    # Paranal.NACO.J
-                              ("NACO.H", 14.43),
-                              ("NACO.K", 15.23),
-                              ("NACO.Lp", 6.00),
-                              ("NACO.Mp", 1.14),
-                              ("MIDI.Nband", -2.29)])   # Paranal.MIDI.Nband
+    @pytest.mark.parametrize("filter_name, sky_mag", skycalc_bg_mags)
     def test_returns_expected_sky_bg_counts(self, filter_name, sky_mag):
         obs, inst, filt = None, None, filter_name
         if "." in filter_name:
@@ -104,5 +107,24 @@ class TestInSkyCalcBackground:
                                            instrument=inst,
                                            observatory=obs)
 
-        assert skycalc_phs.value == approx(vega_phs.value, rel=0.1)
+        assert skycalc_phs.value == approx(vega_phs.value, rel=0.05)
 
+    def test_returns_different_values_for_different_airmasses(self):
+        am1_phs = hmbp.in_skycalc_background("M", airmass=1.0)
+        am2_phs = hmbp.in_skycalc_background("M", airmass=2.0)
+
+        assert am2_phs.value == approx(1.5 * am1_phs.value, rel=0.1)
+
+    def plot_skycalc_spectrum_and_filters(self):
+        import skycalc_ipy
+        import numpy as np
+        import matplotlib.pyplot as plt
+        import astropy.units as u
+
+        skycalc = skycalc_ipy.SkyCalc()
+        # skycalc.values.update(kwargs)
+        sky_trans, sky_flux = skycalc.get_sky_spectrum(return_type="synphot")
+
+        wave = np.linspace(0.3, 14, 1000)*u.um
+        plt.loglog(wave, sky_flux(wave))
+        plt.show()

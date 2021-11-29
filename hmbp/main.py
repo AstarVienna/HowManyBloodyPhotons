@@ -159,8 +159,53 @@ in_one_jansky.__doc__ = for_flux_in_filter.__doc__
 
 def in_skycalc_background(filter_name, instrument=None, observatory=None,
                           **kwargs):
+    """
+    Returns the expected number of sky photons in a filter via ESO SkyCalc
+
+    Parameters
+    ----------
+    filter_name : str
+    instrument : str, optional
+    observatory : str, optional
+
+    kwargs
+    ------
+    Any keyword arguments accepted by either skycalc_ipy or skycalc_cli
+
+    Returns
+    -------
+    n_ph : astropy.Quantity
+        [ph s-1 m-2 arcsec-2]
+
+    Examples
+    --------
+    Find the number of photons emitted by the sky in Ks [ph s-1 m-2 arcsec-2]::
+
+        >>> from astropy import units as u
+        >>> import hmbp
+        >>>
+        >>> hmbp.in_skycalc_background("Ks")
+
+    Find the number of photons emitted by the sky in the M-prime filter as used
+    by NACO (back in the day) at airmass of 2.0 and PWV or 5.0 mm::
+
+        >>> hmbp.in_skycalc_background("Mp", instrument="NACO", observatory="Paranal",
+                                       airmass=2.0, pwv=5.0)
+
+    See Also
+    --------
+    SkyCalc parameters:
+    https://www.eso.org/observing/etc/doc/skycalc/helpskycalccli.html
+
+    """
+    params = {"wmin": 300.,     # [nm]
+              "wmax": 30000.,   # [nm]
+              "wgrid_mode": 'fixed_spectral_resolution',
+              "wres": 5000,     # wave/dwave
+              }
+    params.update(kwargs)
     skycalc = skycalc_ipy.SkyCalc()
-    skycalc.values.update(kwargs)
+    skycalc.values.update(params)
     sky_trans, sky_flux = skycalc.get_sky_spectrum(return_type="synphot")
 
     n_ph = for_flux_in_filter(filter_name=filter_name, flux=None,

@@ -100,6 +100,7 @@ We have also provided a few helper functions for several common flux conversions
 - ``hmbp.in_zero_vega_mags``
 - ``hmbp.in_zero_AB_mags``
 - ``hmbp.in_one_jansky``
+- ``hmbp.in_skycalc_background``
 
 The function signatures follow the same pattern as ``hmbp.for_flux_in_filter``,
 just without needing to explicitly specify the flux parameter.
@@ -112,4 +113,5 @@ Some short examples:
 hmbp.in_zero_vega_mags("V")
 hmbp.in_zero_AB_mags("Ks", "HAWKI", "Paranal")
 hmbp.in_one_jansky("NeII", instrument="VISIR", observatory="Paranal")
+hmbp.in_skycalc_background("M", airmass=2.0, pwv=5.0)
 ```
