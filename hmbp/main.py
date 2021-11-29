@@ -5,7 +5,7 @@ from synphot import SourceSpectrum
 
 import skycalc_ipy
 from scopesim.effects import ter_curves_utils as tcu
-from scopesim.source import spectrum_templates as st
+from scopesim.source import source_templates as st
 
 FILTER_DEFAULTS = tcu.FILTER_DEFAULTS
 
