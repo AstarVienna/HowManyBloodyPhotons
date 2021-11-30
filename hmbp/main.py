@@ -1,7 +1,7 @@
 import yaml
 import numpy as np
 from astropy import units as u
-from synphot import SourceSpectrum
+from synphot import SourceSpectrum, SpectralElement
 
 import skycalc_ipy
 from scopesim.effects import ter_curves_utils as tcu
@@ -112,11 +112,15 @@ def for_flux_in_filter(filter_name, flux, instrument=None, observatory=None,
 
     """
 
-    if observatory is None and instrument is None and \
-            filter_name in FILTER_DEFAULTS:
-        svo_str = FILTER_DEFAULTS[filter_name]
-    else:
-        svo_str = f"{observatory}/{instrument}.{filter_name}"
+    if isinstance(filter_name, str):
+        if observatory is None and instrument is None and \
+                filter_name in FILTER_DEFAULTS:
+            svo_str = FILTER_DEFAULTS[filter_name]
+        else:
+            svo_str = f"{observatory}/{instrument}.{filter_name}"
+        filt = tcu.download_svo_filter(svo_str)
+    elif isinstance(filter_name, SpectralElement):
+        filt = filter_name
 
     if isinstance(override_spectrum, SourceSpectrum):
         spec = override_spectrum
@@ -129,12 +133,9 @@ def for_flux_in_filter(filter_name, flux, instrument=None, observatory=None,
             flux = flux.value
         spec = spec_template(flux)
 
-    filt = tcu.download_svo_filter(svo_str)
     wave = filt.waveset
     dwave = 0.5 * (np.r_[[0], np.diff(wave)] + np.r_[np.diff(wave), [0]])
-
-    flux = spec(wave)  # ph/s/cm2/AA
-    flux *= filt(wave) * dwave  # ph/s
+    flux = spec(wave) * filt(wave) * dwave  # ph/s/cm2
     n_ph = np.sum(flux.to(u.ph / u.s / u.m ** 2))
 
     return n_ph
