@@ -1,6 +1,7 @@
 import pytest
 from pytest import approx
 
+from synphot import SpectralElement, Empirical1D
 import astropy.units as u
 import hmbp
 
@@ -128,3 +129,12 @@ class TestInSkyCalcBackground:
         wave = np.linspace(0.3, 14, 1000)*u.um
         plt.loglog(wave, sky_flux(wave))
         plt.show()
+
+    def test_override_filter_name_with_spectral_element(self):
+        wave = [1.99, 2.0, 2.3, 2.31] * u.um
+        trans = [0, 0.8, 0.8, 0]
+        filt = SpectralElement(Empirical1D, points=wave, lookup_table=trans)
+        custom_phs = hmbp.in_skycalc_background(filt)
+        ks_phs = hmbp.in_skycalc_background("Ks")
+
+        assert ks_phs.value == approx(custom_phs.value, rel=0.05)

@@ -133,7 +133,7 @@ def for_flux_in_filter(filter_name, flux, instrument=None, observatory=None,
             flux = flux.value
         spec = spec_template(flux)
 
-    wave = filt.waveset
+    wave = filt.waveset if len(filt.waveset) > len(spec.waveset) else spec.waveset
     dwave = 0.5 * (np.r_[[0], np.diff(wave)] + np.r_[np.diff(wave), [0]])
     flux = spec(wave) * filt(wave) * dwave  # ph/s/cm2
     n_ph = np.sum(flux.to(u.ph / u.s / u.m ** 2))
