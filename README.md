@@ -1,4 +1,4 @@
-![# How Many Photons](https://raw.githubusercontent.com/AstarVienna/HowManyBloodyPhotons/main/docs/logos/logo_t.png)
+<img src="https://raw.githubusercontent.com/AstarVienna/HowManyBloodyPhotons/main/docs/logos/logo_t.png" alt="# How Many Photons" width="400"/>
 
 Tiny repo to calculate astronomical photon counts for various instruments
 
