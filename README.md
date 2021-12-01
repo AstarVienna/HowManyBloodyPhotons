@@ -1,4 +1,5 @@
-# How Many Photons
+![# How Many Photons](https://raw.githubusercontent.com/AstarVienna/HowManyBloodyPhotons/main/docs/logos/logo_t.png)
+
 Tiny repo to calculate astronomical photon counts for various instruments
 
 Note: the python package must be called using the abbreviation ``hmbp``.
