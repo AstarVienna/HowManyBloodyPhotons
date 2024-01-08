@@ -36,6 +36,7 @@ class TestForMagnitudeInFilter:
     def test_runs_for_all_default_filters(self, filter_name):
         assert hmbp.for_flux_in_filter(filter_name, 0)
 
+
 class TestInZeroVegaMags:
     @pytest.mark.parametrize("filter_name, ph_exp",
                              [("J", 2.56e9), ("H", 2.76e9), ("Ks", 1.27e9)])
