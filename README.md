@@ -10,8 +10,9 @@ convoluted legacy units still used in modern day Astronomy.
 
 ## Install
 
-    pip install HowManyPhotons 
-
+```bash
+pip install HowManyPhotons
+```
 
 ## Basic usage
 
@@ -31,9 +32,9 @@ hmbp.convert(from_quantity=10*u.mJy, to_unit=u.mag, filter_name="J",
 
 ## Input and output units
 
-``hmbp`` accepts and converts between ``u.mag`` (Vega), ``u.ABmag`` and ``u.Jy``.
+`hmbp` accepts and converts between `u.mag` (Vega), `u.ABmag` and `u.Jy`.
 
-ALL functions return photons counts in units of ``[ph s-1 m-2]``.
+ALL functions return photons counts in units of `[ph s-1 m-2]`.
 
 ONLY the filter curve is included in the calclutation. 
 The following instrumental transmission profiles are NOT included in the photon 
@@ -49,21 +50,21 @@ HowManyBloodyPhotons, but they are currently NOT considered.
 
 ## Main functions
 
-The are two main functions: ``for_flux_in_filter`` and ``convert``:
+The are two main functions: `for_flux_in_filter` and `convert`:
 
 ### hmbp.for_flux_in_filter
 
 Returns the number of incoming photons through a specific filter. 
-If no ``instrument`` and ``observatory`` are provided, ``hmbp`` looks for a 
-corresponding ``filter_name`` in the dictionary ``hmbp.FILTER_DEFAULTS``.
+If no `instrument` and `observatory` are provided, `hmbp` looks for a
+corresponding `filter_name` in the dictionary `hmbp.FILTER_DEFAULTS`.
 
-The result is an ``astropy.Quantity`` with the units ``[ph s-1 m-2]``.
+The result is an `astropy.Quantity` with the units `[ph s-1 m-2]`.
 
 Function signature: 
 
-``
+```python
 hmbp.for_flux_in_filter(filter_name, flux, instrument=None, observatory=None)
-``
+```
 
 Some short examples:
 
@@ -77,13 +78,13 @@ hmbp.for_flux_in_filter("Si6", 1*u.Jy, instrument="Michelle", observatory="Gemin
 ### hmbp.convert
 
 Converts one common flux unit into another common flux: 
-(``mag``, ``ABmag``, ``Jy``)
+(`mag`, `ABmag`, `Jy`)
 
 Function signature: 
 
-``
+```python
 hmbp.convert(from_quantity, to_unit, filter_name, instrument=None, observatory=None)
-``
+```
 
 Some short examples:
 
@@ -98,15 +99,15 @@ hmbp.convert(from_quantity=0*u.mag, to_unit=u.ABmag, filter_name="J",
 
 We have also provided a few helper functions for several common flux conversions:
 
-- ``hmbp.in_zero_vega_mags``
-- ``hmbp.in_zero_AB_mags``
-- ``hmbp.in_one_jansky``
-- ``hmbp.in_skycalc_background``
+- `hmbp.in_zero_vega_mags`
+- `hmbp.in_zero_AB_mags`
+- `hmbp.in_one_jansky`
+- `hmbp.in_skycalc_background`
 
-The function signatures follow the same pattern as ``hmbp.for_flux_in_filter``,
+The function signatures follow the same pattern as `hmbp.for_flux_in_filter`,
 just without needing to explicitly specify the flux parameter.
 
-Returned units are ``[ph s-1 m-2]``
+Returned units are `[ph s-1 m-2]`
 
 Some short examples:
 
