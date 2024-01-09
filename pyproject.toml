@@ -1,0 +1,37 @@
+[tool.poetry]
+name = "HowManyPhotons"
+version = "0.3.0a0"
+description = "Simple photon count utility for astronomical fluxes"
+authors = ["Kieran Leschinski <kieran.leschinski@unive.ac.at>"]
+maintainers = [
+    "Kieran Leschinski <kieran.leschinski@unive.ac.at>",
+    "Hugo Buddelmeijer <hugo@buddelmeijer.nl>",
+    "Fabian Haberhauer <fabian.haberhauer@univie.ac.at>",
+]
+license = "GPLv3"
+readme = "README.md"
+repository = "https://github.com/AstarVienna/HowManyBloodyPhotons"
+classifiers = [
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering :: Astronomy",
+]
+packages = [{include = "hmbp"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+numpy = "^1.24.4"
+astropy = "^5.2.2"
+pyyaml = "^6.0.0"
+synphot = "^1.1.0"
+
+skycalc_ipy = "^0.2.0"
+ScopeSim = "^0.7.1"
+
+[tool.poetry.group.test.dependencies]
+pytest = "^7.4.3"
+pytest-cov = "^4.1.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
