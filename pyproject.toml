@@ -25,7 +25,7 @@ astropy = "^5.2.2"
 pyyaml = "^6.0.0"
 synphot = "^1.1.0"
 
-skycalc_ipy = "^0.2.0"
+skycalc_ipy = "^0.3.0"
 ScopeSim = "^0.7.1"
 
 [tool.poetry.group.test.dependencies]

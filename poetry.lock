@@ -22,6 +22,28 @@ docs = ["numpydoc", "sphinx (>=4.3.0)", "sphinx-rtd-theme (>=0.5.1)", "sphinxcon
 test = ["pytest (>=5.0.0)", "pytest-cov"]
 
 [[package]]
+name = "anyio"
+version = "4.2.0"
+description = "High level compatibility layer for multiple asynchronous event loop implementations"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "anyio-4.2.0-py3-none-any.whl", hash = "sha256:745843b39e829e108e518c489b31dc757de7d2131d53fac32bd8df268227bfee"},
+    {file = "anyio-4.2.0.tar.gz", hash = "sha256:e1875bb4b4e2de1669f4bc7869b6d3f54231cdced71605e6e64c9be77e3be50f"},
+]
+
+[package.dependencies]
+exceptiongroup = {version = ">=1.0.2", markers = "python_version < \"3.11\""}
+idna = ">=2.8"
+sniffio = ">=1.1"
+typing-extensions = {version = ">=4.1", markers = "python_version < \"3.11\""}
+
+[package.extras]
+doc = ["Sphinx (>=7)", "packaging", "sphinx-autodoc-typehints (>=1.2.0)", "sphinx-rtd-theme"]
+test = ["anyio[trio]", "coverage[toml] (>=7)", "exceptiongroup (>=1.2.0)", "hypothesis (>=4.0)", "psutil (>=5.9)", "pytest (>=7.0)", "pytest-mock (>=3.6.1)", "trustme", "uvloop (>=0.17)"]
+trio = ["trio (>=0.23)"]
+
+[[package]]
 name = "astropy"
 version = "5.2.2"
 description = "Astronomy and astrophysics core library"
@@ -491,6 +513,61 @@ type1 = ["xattr"]
 ufo = ["fs (>=2.2.0,<3)"]
 unicode = ["unicodedata2 (>=15.1.0)"]
 woff = ["brotli (>=1.0.1)", "brotlicffi (>=0.8.0)", "zopfli (>=0.1.4)"]
+
+[[package]]
+name = "h11"
+version = "0.14.0"
+description = "A pure-Python, bring-your-own-I/O implementation of HTTP/1.1"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "h11-0.14.0-py3-none-any.whl", hash = "sha256:e3fe4ac4b851c468cc8363d500db52c2ead036020723024a109d37346efaa761"},
+    {file = "h11-0.14.0.tar.gz", hash = "sha256:8f19fbbe99e72420ff35c00b27a34cb9937e902a8b810e2c88300c6f0a3b699d"},
+]
+
+[[package]]
+name = "httpcore"
+version = "0.16.3"
+description = "A minimal low-level HTTP client."
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "httpcore-0.16.3-py3-none-any.whl", hash = "sha256:da1fb708784a938aa084bde4feb8317056c55037247c787bd7e19eb2c2949dc0"},
+    {file = "httpcore-0.16.3.tar.gz", hash = "sha256:c5d6f04e2fc530f39e0c077e6a30caa53f1451096120f1f38b954afd0b17c0cb"},
+]
+
+[package.dependencies]
+anyio = ">=3.0,<5.0"
+certifi = "*"
+h11 = ">=0.13,<0.15"
+sniffio = "==1.*"
+
+[package.extras]
+http2 = ["h2 (>=3,<5)"]
+socks = ["socksio (==1.*)"]
+
+[[package]]
+name = "httpx"
+version = "0.23.3"
+description = "The next generation HTTP client."
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "httpx-0.23.3-py3-none-any.whl", hash = "sha256:a211fcce9b1254ea24f0cd6af9869b3d29aba40154e947d2a07bb499b3e310d6"},
+    {file = "httpx-0.23.3.tar.gz", hash = "sha256:9818458eb565bb54898ccb9b8b251a28785dd4a55afbc23d0eb410754fe7d0f9"},
+]
+
+[package.dependencies]
+certifi = "*"
+httpcore = ">=0.15.0,<0.17.0"
+rfc3986 = {version = ">=1.3,<2", extras = ["idna2008"]}
+sniffio = "*"
+
+[package.extras]
+brotli = ["brotli", "brotlicffi"]
+cli = ["click (==8.*)", "pygments (==2.*)", "rich (>=10,<13)"]
+http2 = ["h2 (>=3,<5)"]
+socks = ["socksio (==1.*)"]
 
 [[package]]
 name = "idna"
@@ -1174,6 +1251,23 @@ security = ["itsdangerous (>=2.0)"]
 yaml = ["pyyaml (>=5.4)"]
 
 [[package]]
+name = "rfc3986"
+version = "1.5.0"
+description = "Validating URI References per RFC 3986"
+optional = false
+python-versions = "*"
+files = [
+    {file = "rfc3986-1.5.0-py2.py3-none-any.whl", hash = "sha256:a86d6e1f5b1dc238b218b012df0aa79409667bb209e58da56d0b94704e712a97"},
+    {file = "rfc3986-1.5.0.tar.gz", hash = "sha256:270aaf10d87d0d4e095063c65bf3ddbc6ee3d0b226328ce21e036f946e421835"},
+]
+
+[package.dependencies]
+idna = {version = "*", optional = true, markers = "extra == \"idna2008\""}
+
+[package.extras]
+idna2008 = ["idna"]
+
+[[package]]
 name = "scipy"
 version = "1.11.4"
 description = "Fundamental algorithms for scientific computing in Python"
@@ -1262,24 +1356,34 @@ files = [
 
 [[package]]
 name = "skycalc-ipy"
-version = "0.2.0"
-description = "Get atmospheric spectral information from the ESO skycalc server"
+version = "0.3.0"
+description = "Get atmospheric spectral information from the ESO skycalc server."
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.8,<4.0"
 files = [
-    {file = "skycalc_ipy-0.2.0-py3-none-any.whl", hash = "sha256:bde3ebe43c989bc52be0876f8581afe4957eef2b7596a49e8219674a5eafacca"},
-    {file = "skycalc_ipy-0.2.0.tar.gz", hash = "sha256:9ce295cb4a88a48579d1927878c0f6a050e824c4d98af5fc1f37b23881f1f689"},
+    {file = "skycalc_ipy-0.3.0-py3-none-any.whl", hash = "sha256:70885c54816cf204bfd9ce142587cacec450820f4cc200daa7f68651dcaa61e3"},
+    {file = "skycalc_ipy-0.3.0.tar.gz", hash = "sha256:aa115488201539a3b93cece8cbb5d6bf99004bb7f026fcce3e800ecffd171764"},
 ]
 
 [package.dependencies]
-astropy = ">=4.0"
-numpy = ">=1.18.0"
-pyyaml = ">=5.3"
-requests = ">=2.20"
+astropy = ">=5.2.2,<6.0.0"
+httpx = ">=0.23.0,<0.24.0"
+numpy = ">=1.24.4,<2.0.0"
+pyyaml = ">=6.0.0,<7.0.0"
 
 [package.extras]
-docs = ["jupyter-sphinx (==0.2.3)", "matplotlib (>=3.2.0)", "nbsphinx", "numpydoc", "sphinx (>=4.3.0)", "sphinx-rtd-theme (>=0.5.1)", "sphinxcontrib-apidoc"]
-test = ["matplotlib (>=3.2.0)", "pytest (>=5.0.0)", "pytest-cov", "synphot (>=1.1.0)"]
+syn = ["synphot (>=1.1.0,<2.0.0)"]
+
+[[package]]
+name = "sniffio"
+version = "1.3.0"
+description = "Sniff out which async library your code is running under"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "sniffio-1.3.0-py3-none-any.whl", hash = "sha256:eecefdce1e5bbfb7ad2eeaabf7c1eeb404d7757c379bd1f7e5cce9d8bf425384"},
+    {file = "sniffio-1.3.0.tar.gz", hash = "sha256:e60305c5e5d314f5389259b7f22aaa33d8f7dee49763119234af3755c55b9101"},
+]
 
 [[package]]
 name = "soupsieve"
@@ -1430,4 +1534,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "5a515a9da201d8c2952da284f8e98f6178f7e42658d36c20d2f7c21318badd88"
+content-hash = "36f27e24fd477deee22333b42a6910dfc59ec96bc28b16b6d6a34438bf5cd6b2"
