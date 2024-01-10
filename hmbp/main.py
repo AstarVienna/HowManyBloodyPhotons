@@ -1,4 +1,6 @@
-import yaml
+# -*- coding: utf-8 -*-
+"""."""
+
 import numpy as np
 from astropy import units as u
 from synphot import SourceSpectrum, SpectralElement
@@ -13,7 +15,7 @@ FILTER_DEFAULTS = tcu.FILTER_DEFAULTS
 def convert(from_quantity, to_unit, filter_name,
             instrument=None, observatory=None):
     """
-    Converts units within a certain instrument filters
+    Convert units within a certain instrument filters.
 
     If ``filter_name`` is not a generic name as listed in
     ``hmbp.FILTER_DEFAULTS``, the instrument and observatory must be given as
@@ -50,7 +52,6 @@ def convert(from_quantity, to_unit, filter_name,
     http://svo2.cab.inta-csic.es/theory/fps/
 
     """
-
     base_fn = {u.mag: in_zero_vega_mags,
                u.ABmag: in_zero_AB_mags,
                u.Jy: in_one_jansky}[to_unit]
@@ -70,7 +71,7 @@ def convert(from_quantity, to_unit, filter_name,
 def for_flux_in_filter(filter_name, flux, instrument=None, observatory=None,
                        override_spectrum=None):
     """
-    Returns the number of photons in a given filter at a given magnitude
+    Return the number of photons in a given filter at a given magnitude.
 
     Filter anme, instrument, and observatory are as per the Spanish VO filter
     service name
@@ -111,7 +112,6 @@ def for_flux_in_filter(filter_name, flux, instrument=None, observatory=None,
     http://svo2.cab.inta-csic.es/theory/fps/
 
     """
-
     if isinstance(filter_name, str):
         if observatory is None and instrument is None and \
                 filter_name in FILTER_DEFAULTS:
@@ -133,7 +133,7 @@ def for_flux_in_filter(filter_name, flux, instrument=None, observatory=None,
             flux = flux.value
         spec = spec_template(flux)
 
-    wave = filt.waveset if len(filt.waveset) > len(spec.waveset) else spec.waveset
+    wave = max(filt.waveset, spec.waveset, key=len)
     dwave = 0.5 * (np.r_[[0], np.diff(wave)] + np.r_[np.diff(wave), [0]])
     flux = spec(wave) * filt(wave) * dwave  # ph/s/cm2
     n_ph = np.sum(flux.to(u.ph / u.s / u.m ** 2))
@@ -161,7 +161,7 @@ in_one_jansky.__doc__ = for_flux_in_filter.__doc__
 def in_skycalc_background(filter_name, instrument=None, observatory=None,
                           **kwargs):
     """
-    Returns the expected number of sky photons in a filter via ESO SkyCalc
+    Return the expected number of sky photons in a filter via ESO SkyCalc.
 
     Parameters
     ----------
@@ -190,7 +190,8 @@ def in_skycalc_background(filter_name, instrument=None, observatory=None,
     Find the number of photons emitted by the sky in the M-prime filter as used
     by NACO (back in the day) at airmass of 2.0 and PWV or 5.0 mm::
 
-        >>> hmbp.in_skycalc_background("Mp", instrument="NACO", observatory="Paranal",
+        >>> hmbp.in_skycalc_background("Mp", instrument="NACO",
+                                       observatory="Paranal",
                                        airmass=2.0, pwv=5.0)
 
     See Also
@@ -207,7 +208,7 @@ def in_skycalc_background(filter_name, instrument=None, observatory=None,
     params.update(kwargs)
     skycalc = skycalc_ipy.SkyCalc()
     skycalc.values.update(params)
-    sky_trans, sky_flux = skycalc.get_sky_spectrum(return_type="synphot")
+    _, sky_flux = skycalc.get_sky_spectrum(return_type="synphot")
 
     n_ph = for_flux_in_filter(filter_name=filter_name, flux=None,
                               instrument=instrument, observatory=observatory,
