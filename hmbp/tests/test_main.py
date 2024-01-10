@@ -34,7 +34,8 @@ class TestForMagnitudeInFilter:
 
     @pytest.mark.parametrize("filter_name", hmbp.FILTER_DEFAULTS.keys())
     def test_runs_for_all_default_filters(self, filter_name):
-        assert hmbp.for_flux_in_filter(filter_name, 0)
+        zeroflux = 0 * u.ph / (u.s * u.m**2)
+        assert hmbp.for_flux_in_filter(filter_name, 0) > zeroflux
 
 
 @pytest.mark.skip(reason="Suddenly fails. Dunno why.")
