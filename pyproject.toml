@@ -5,8 +5,8 @@ description = "Simple photon count utility for astronomical fluxes"
 authors = ["Kieran Leschinski <kieran.leschinski@unive.ac.at>"]
 maintainers = [
     "Kieran Leschinski <kieran.leschinski@unive.ac.at>",
-    "Hugo Buddelmeijer <hugo@buddelmeijer.nl>",
     "Fabian Haberhauer <fabian.haberhauer@univie.ac.at>",
+    "Hugo Buddelmeijer <hugo@buddelmeijer.nl>",
 ]
 license = "GPLv3"
 readme = "README.md"
