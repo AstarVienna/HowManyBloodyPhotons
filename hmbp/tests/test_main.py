@@ -97,6 +97,7 @@ skycalc_bg_mags = [("U", 20.7),            # [20.76] Generic/Bessel.U
 
 
 @pytest.mark.skip(reason="Suddenly fails. Dunno why.")
+@pytest.mark.webtest
 class TestInSkyCalcBackground:
     # Sky mags taken from skycalc with default values from website
     @pytest.mark.parametrize("filter_name, sky_mag", skycalc_bg_mags)
