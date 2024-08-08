@@ -32,6 +32,7 @@ class TestForMagnitudeInFilter:
 
         assert ab_phs.value == approx(jy_phs.value, rel=0.02)
 
+    @pytest.mark.webtest
     @pytest.mark.parametrize("filter_name", hmbp.FILTER_DEFAULTS.keys())
     def test_runs_for_all_default_filters(self, filter_name):
         zeroflux = 0 * u.ph / (u.s * u.m**2)
@@ -48,6 +49,7 @@ class TestInZeroVegaMags:
         assert vega_phs.value == approx(ph_exp, rel=0.02)
 
 
+@pytest.mark.webtest
 class TestInOneJansky:
     @pytest.mark.parametrize("filter_name, vega_ab",
                              [("I", 0.45), ("H", 1.39)])
