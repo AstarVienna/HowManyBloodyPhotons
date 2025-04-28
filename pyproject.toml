@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "HowManyPhotons"
-version = "0.3.0rc0"
+version = "0.3.0"
 description = "Simple photon count utility for astronomical fluxes"
 authors = ["Kieran Leschinski <kieran.leschinski@unive.ac.at>"]
 maintainers = [
