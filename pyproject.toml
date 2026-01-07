@@ -1,16 +1,35 @@
-[tool.poetry]
+[project]
 name = "HowManyPhotons"
 version = "0.4.0a0"
 description = "Simple photon count utility for astronomical fluxes"
-authors = ["Kieran Leschinski <kieran.leschinski@unive.ac.at>"]
-maintainers = [
-    "Kieran Leschinski <kieran.leschinski@unive.ac.at>",
-    "Fabian Haberhauer <fabian.haberhauer@univie.ac.at>",
-    "Hugo Buddelmeijer <hugo@buddelmeijer.nl>",
+license = {text = "GPL-3.0-or-later"}
+authors = [
+    {name = "Kieran Leschinski", email = "kieran.leschinski@univie.ac.at"}
 ]
-license = "GPLv3"
+maintainers = [
+    {name = "Kieran Leschinski", email = "kieran.leschinski@univie.ac.at"},
+    {name = "Fabian Haberhauer", email = "fabian.haberhauer@univie.ac.at"},
+]
 readme = "README.md"
-repository = "https://github.com/AstarVienna/HowManyBloodyPhotons"
+keywords = [ "astronomy" ]
+dynamic = [ "classifiers" ]
+requires-python = ">=3.10,<3.14"
+dependencies = [
+    "numpy (>=1.26.4,<2.3.0)",
+    "astropy (>=6.1.7,<7.0.0)",
+    "pyyaml (>=6.0.2,<7.0.0)",
+    "synphot (>=1.5.0,<2.0.0)",
+
+    "skycalc-ipy (>=0.6.0,<1.0)",
+    "scopesim (>=0.11.1,<1.0)",
+]
+
+[project.urls]
+Repository = "https://github.com/AstarVienna/HowManyBloodyPhotons"
+Changelog = "https://github.com/AstarVienna/HowManyBloodyPhotons/releases"
+
+
+[tool.poetry]
 classifiers = [
     "Intended Audience :: Science/Research",
     "Operating System :: OS Independent",
@@ -18,22 +37,13 @@ classifiers = [
 ]
 packages = [{include = "hmbp"}]
 
-[tool.poetry.dependencies]
-python = ">=3.10, <3.13"
-numpy = "^1.26.3"
-astropy = "^6.0.1"
-pyyaml = "^6.0.1"
-synphot = "^1.4.0"
-
-skycalc_ipy = "^0.5.2"
-ScopeSim = ">=0.9.3"
-
 [tool.poetry.group.test.dependencies]
 pytest = "^8.3.5"
-pytest-cov = "^6.0.0"
+pytest-cov = "^7.0.0"
+
 
 [build-system]
-requires = ["poetry-core"]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.pytest.ini_options]
