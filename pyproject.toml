@@ -15,9 +15,9 @@ keywords = [ "astronomy" ]
 dynamic = [ "classifiers" ]
 requires-python = ">=3.10,<3.14"
 dependencies = [
-    "numpy (>=1.26.4,<2.3.0)",
-    "astropy (>=6.1.7,<7.0.0)",
-    "pyyaml (>=6.0.2,<7.0.0)",
+    "numpy (>=2.2.6,<2.5.0)",
+    "astropy (>=6.1.7,<8.0.0)",
+    "pyyaml (>=6.0.3,<7.0.0)",
     "synphot (>=1.5.0,<2.0.0)",
 
     "skycalc-ipy (>=0.6.0,<1.0)",
