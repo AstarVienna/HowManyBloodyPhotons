@@ -38,7 +38,7 @@ classifiers = [
 packages = [{include = "hmbp"}]
 
 [tool.poetry.group.test.dependencies]
-pytest = "^8.3.5"
+pytest = "^9.0.2"
 pytest-cov = "^7.0.0"
 
 
