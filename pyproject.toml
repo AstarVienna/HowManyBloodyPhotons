@@ -47,9 +47,10 @@ requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.pytest.ini_options]
-addopts = "--strict-markers"
+addopts = "--strict-markers -m 'not plottest'"
 markers = [
     "webtest: marks tests as requiring network (deselect with '-m \"not webtest\"')",
+    "plottest: test which only produce plot(s), deselected by default"
 ]
 filterwarnings = [
     "error",

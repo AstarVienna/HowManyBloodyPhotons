@@ -131,6 +131,7 @@ class TestInSkyCalcBackground:
         am2_phs = hmbp.in_skycalc_background("M", airmass=2.0)
         npt.assert_allclose(am2_phs, 1.5 * am1_phs, rtol=0.04)
 
+    @pytest.mark.plottest
     def test_plot_skycalc_spectrum_and_filters(self):  # 2 warnings
         import skycalc_ipy
         import numpy as np
