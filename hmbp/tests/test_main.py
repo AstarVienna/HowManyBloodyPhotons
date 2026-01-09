@@ -101,11 +101,11 @@ class TestInSkyCalcBackground:
             ("V", 20.6),  # [20.67]
             pytest.param("R", 20.3, marks=pytest.mark.xfail(reason="Off by 8 % for unknown reasons.")),  # [20.32]
             pytest.param("I", 19.5, marks=pytest.mark.xfail(reason="Off by 23 % for unknown reasons.")),  # [19.48]
-            pytest.param("NACO.J", 17.3, marks=pytest.mark.xfail(reason="Off by 214842053 % for unknown reasons.")),  # [16.87] Paranal/NACO.J
-            pytest.param("NACO.H", 15.3, marks=pytest.mark.xfail(reason="Off by 88661246 % for unknown reasons.")),  # [14.43]
-            pytest.param("NACO.Ks", 15.1, marks=pytest.mark.xfail(reason="Off by 44322087 % for unknown reasons.")),  # [15.23]
-            pytest.param("NACO.Lp", 5.3, marks=pytest.mark.xfail(reason="Off by 10515 % for unknown reasons.")),  # [6.00]
-            pytest.param("NACO.Mp", 1.2, marks=pytest.mark.xfail(reason="Off by 240 % for unknown reasons.")),  # [1.14]
+            pytest.param("NACO.J", 17.3, marks=pytest.mark.xfail(reason="Off by 64 % for unknown reasons.")),  # [16.87] Paranal/NACO.J
+            pytest.param("NACO.H", 15.3, marks=pytest.mark.xfail(reason="Off by 115 % for unknown reasons.")),  # [14.43]
+            pytest.param("NACO.Ks", 15.1, marks=pytest.mark.xfail(reason="Off by 7 % for unknown reasons.")),  # [15.23]
+            pytest.param("NACO.Lp", 5.3, marks=pytest.mark.xfail(reason="Off by 10.5 % for unknown reasons.")),  # [6.00]
+            pytest.param("NACO.Mp", 1.2, marks=pytest.mark.xfail(reason="Off by 14 % for unknown reasons.")),  # [1.14]
             ("MIDI.Nband", -2.7),  # [-2.29] Paranal/MIDI.Nband
         ],
     )
