@@ -38,7 +38,6 @@ class TestForMagnitudeInFilter:
                 assert hmbp.for_flux_in_filter(filter_name, 0) > zeroflux
 
 
-@pytest.mark.xfail(reason="Off by 13-25 % for unknown reasons.")
 class TestInZeroVegaMags:
     @pytest.mark.parametrize(
         "filter_name, ph_exp", [("J", 2.56e9), ("H", 2.76e9), ("Ks", 1.27e9)]
@@ -73,20 +72,8 @@ class TestConvert:
     @pytest.mark.parametrize(
         "filter_name, diff",
         [
-            pytest.param(
-                "J",
-                0.93,
-                marks=pytest.mark.xfail(
-                    reason="Off by 18.5 % for unknown reasons."
-                ),
-            ),
-            pytest.param(
-                "H",
-                1.34,
-                marks=pytest.mark.xfail(
-                    reason="Off by 6 % for unknown reasons."
-                ),
-            ),
+            ("J", 0.93),
+            ("H", 1.34),
             ("Ks", 1.85),
         ],
     )
@@ -119,7 +106,7 @@ class TestInSkyCalcBackground:
             pytest.param("NACO.Ks", 15.1, marks=pytest.mark.xfail(reason="Off by 44322087 % for unknown reasons.")),  # [15.23]
             pytest.param("NACO.Lp", 5.3, marks=pytest.mark.xfail(reason="Off by 10515 % for unknown reasons.")),  # [6.00]
             pytest.param("NACO.Mp", 1.2, marks=pytest.mark.xfail(reason="Off by 240 % for unknown reasons.")),  # [1.14]
-            pytest.param("MIDI.Nband", -2.7, marks=pytest.mark.xfail(reason="Off by 7.4 % for unknown reasons.")),  # [-2.29] Paranal/MIDI.Nband
+            ("MIDI.Nband", -2.7),  # [-2.29] Paranal/MIDI.Nband
         ],
     )
     def test_returns_expected_sky_bg_counts(self, filter_name, sky_mag):  # 22 warnings
@@ -137,7 +124,6 @@ class TestInSkyCalcBackground:
 
         npt.assert_allclose(skycalc_phs, vega_phs, rtol=0.05)
 
-    @pytest.mark.xfail(reason="Off by 24 % for unknown reasons.")
     def test_returns_different_values_for_different_airmasses(self):  # 2 warnings
         am1_phs = hmbp.in_skycalc_background("M", airmass=1.0)
         am2_phs = hmbp.in_skycalc_background("M", airmass=2.0)
