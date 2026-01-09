@@ -94,19 +94,21 @@ class TestInSkyCalcBackground:
     # Sky mags taken from skycalc with default values from website
     @pytest.mark.parametrize(
         "filter_name, sky_mag",
-        # Magnitudes that work  # Original magnitudes from ESO skycalc
         [
-            ("U", 20.7),  # [20.76] Generic/Bessel.U
-            ("B", 21.0),  # [21.14]
-            ("V", 20.6),  # [20.67]
-            pytest.param("R", 20.3, marks=pytest.mark.xfail(reason="Off by 8 % for unknown reasons.")),  # [20.32]
-            pytest.param("I", 19.5, marks=pytest.mark.xfail(reason="Off by 23 % for unknown reasons.")),  # [19.48]
-            pytest.param("NACO.J", 17.3, marks=pytest.mark.xfail(reason="Off by 64 % for unknown reasons.")),  # [16.87] Paranal/NACO.J
-            pytest.param("NACO.H", 15.3, marks=pytest.mark.xfail(reason="Off by 115 % for unknown reasons.")),  # [14.43]
-            pytest.param("NACO.Ks", 15.1, marks=pytest.mark.xfail(reason="Off by 7 % for unknown reasons.")),  # [15.23]
-            pytest.param("NACO.Lp", 5.3, marks=pytest.mark.xfail(reason="Off by 10.5 % for unknown reasons.")),  # [6.00]
-            pytest.param("NACO.Mp", 1.2, marks=pytest.mark.xfail(reason="Off by 14 % for unknown reasons.")),  # [1.14]
-            ("MIDI.Nband", -2.7),  # [-2.29] Paranal/MIDI.Nband
+            # Generic/Bessel
+            ("U", 20.76),
+            pytest.param("B", 21.14, marks=pytest.mark.xfail(reason="Off by 11 % for unknown reasons.")),
+            ("V", 20.67),
+            pytest.param("R", 20.32, marks=pytest.mark.xfail(reason="Off by 10 % for unknown reasons.")),
+            pytest.param("I", 19.48, marks=pytest.mark.xfail(reason="Off by 20 % for unknown reasons.")),
+            # Paranal/NACO
+            pytest.param("NACO.J", 16.87, marks=pytest.mark.xfail(reason="Off by 10 % for unknown reasons.")),
+            ("NACO.H", 14.43),
+            ("NACO.Ks", 15.23),
+            pytest.param("NACO.Lp", 6.0, marks=pytest.mark.xfail(reason="Off by 70 % for unknown reasons.")),
+            pytest.param("NACO.Mp", 1.14, marks=pytest.mark.xfail(reason="Off by 8 % for unknown reasons.")),
+            # Paranal/MIDI
+            pytest.param("MIDI.Nband", -2.29, marks=pytest.mark.xfail(reason="Off by 50 % for unknown reasons.")),
         ],
     )
     def test_returns_expected_sky_bg_counts(self, filter_name, sky_mag):  # 22 warnings
