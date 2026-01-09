@@ -51,6 +51,13 @@ addopts = "--strict-markers"
 markers = [
     "webtest: marks tests as requiring network (deselect with '-m \"not webtest\"')",
 ]
+filterwarnings = [
+    "error",
+    # Seem to come from skycalc_ipy, should fix there...
+    "default:'ph/s/m2/micron/arcsec2':astropy.units.core.UnitsWarning",
+    "default:'1':astropy.units.core.UnitsWarning",
+    "ignore::ResourceWarning",
+]
 
 [tool.coverage.report]
 omit = ["hmbp/tests/*"]
