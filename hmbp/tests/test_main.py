@@ -18,17 +18,17 @@ class TestForMagnitudeInFilter:
         vega_phs = hmbp.for_flux_in_filter("Ks", 30 * u.mag)
         ab_phs = hmbp.for_flux_in_filter("Ks", 30 * u.ABmag)
         scale_factor = 10 ** (-0.4 * 1.85)
-        npt.assert_allclose(vega_phs, ab_phs * scale_factor, rtol=0.02)
+        npt.assert_allclose(vega_phs, ab_phs * scale_factor, rtol=0.006)
 
     def test_ABmag_and_Jansky_are_compatible(self):
         ab_phs = hmbp.for_flux_in_filter("J", 0 * u.ABmag)
         jy_phs = hmbp.for_flux_in_filter("J", 3631 * u.Jy)
-        npt.assert_allclose(ab_phs, jy_phs, rtol=0.02)
+        npt.assert_allclose(ab_phs, jy_phs, rtol=1e-4)
 
     def test_ABmag_and_milliJansky_are_compatible(self):
         ab_phs = hmbp.for_flux_in_filter("J", 0 * u.ABmag)
         jy_phs = hmbp.for_flux_in_filter("J", 3631e3 * u.mJy)
-        npt.assert_allclose(ab_phs, jy_phs, rtol=0.02)
+        npt.assert_allclose(ab_phs, jy_phs, rtol=1e-4)
 
     @pytest.mark.webtest
     def test_runs_for_all_default_filters(self, subtests):
@@ -46,7 +46,7 @@ class TestInZeroVegaMags:
         vega_phs = hmbp.in_zero_vega_mags(
             filter_name, "HAWKI", "Paranal"
         ).to_value(u.ph / u.s / u.m**2)
-        npt.assert_allclose(vega_phs, ph_exp, rtol=0.02)
+        npt.assert_allclose(vega_phs, ph_exp, rtol=0.002)
 
 
 @pytest.mark.webtest
@@ -127,7 +127,7 @@ class TestInSkyCalcBackground:
     def test_returns_different_values_for_different_airmasses(self):  # 2 warnings
         am1_phs = hmbp.in_skycalc_background("M", airmass=1.0)
         am2_phs = hmbp.in_skycalc_background("M", airmass=2.0)
-        npt.assert_allclose(am2_phs, 1.5 * am1_phs, rtol=0.1)
+        npt.assert_allclose(am2_phs, 1.5 * am1_phs, rtol=0.04)
 
     def test_plot_skycalc_spectrum_and_filters(self):  # 2 warnings
         import skycalc_ipy
@@ -149,4 +149,4 @@ class TestInSkyCalcBackground:
         filt = SpectralElement(Empirical1D, points=wave, lookup_table=trans)
         custom_phs = hmbp.in_skycalc_background(filt)
         ks_phs = hmbp.in_skycalc_background("Ks")
-        npt.assert_allclose(ks_phs, custom_phs, rtol=0.05)
+        npt.assert_allclose(ks_phs, custom_phs, rtol=0.03)
