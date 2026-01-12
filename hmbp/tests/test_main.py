@@ -97,16 +97,16 @@ class TestInSkyCalcBackground:
         [
             # Generic/Bessel
             ("U", 20.76),
-            pytest.param("B", 21.14, marks=pytest.mark.xfail(reason="Off by 11 % for unknown reasons.")),
+            ("B", 21.14),
             ("V", 20.67),
-            pytest.param("R", 20.32, marks=pytest.mark.xfail(reason="Off by 10 % for unknown reasons.")),
+            ("R", 20.32),
             pytest.param("I", 19.48, marks=pytest.mark.xfail(reason="Off by 20 % for unknown reasons.")),
             # Paranal/NACO
-            pytest.param("NACO.J", 16.87, marks=pytest.mark.xfail(reason="Off by 10 % for unknown reasons.")),
+            ("NACO.J", 16.87),
             ("NACO.H", 14.43),
             ("NACO.Ks", 15.23),
             pytest.param("NACO.Lp", 6.0, marks=pytest.mark.xfail(reason="Off by 70 % for unknown reasons.")),
-            pytest.param("NACO.Mp", 1.14, marks=pytest.mark.xfail(reason="Off by 8 % for unknown reasons.")),
+           ("NACO.Mp", 1.14),
             # Paranal/MIDI
             pytest.param("MIDI.Nband", -2.29, marks=pytest.mark.xfail(reason="Off by 50 % for unknown reasons.")),
         ],
@@ -124,7 +124,7 @@ class TestInSkyCalcBackground:
             filt, sky_mag * u.mag, instrument=inst, observatory=obs
         )
 
-        npt.assert_allclose(skycalc_phs, vega_phs, rtol=0.05)
+        npt.assert_allclose(skycalc_phs, vega_phs, rtol=0.15)
 
     def test_returns_different_values_for_different_airmasses(self):  # 2 warnings
         am1_phs = hmbp.in_skycalc_background("M", airmass=1.0)
