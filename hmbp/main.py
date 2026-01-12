@@ -38,14 +38,16 @@ def convert(from_quantity, to_unit, filter_name,
 
     Examples
     --------
-    Convert from Vega magnitudes to Jansky in the NACO M-prime filter::
+    Convert from Vega magnitudes to Jansky in the NACO M-prime filter:
 
-        >>> from astropy import units as u
-        >>> import hmbp
-        >>>
-        >>> hmbp.convert(20 * u.mag, u.Jy, filter_name="Mp",
-        >>>              observatory="Paranal", instrument="NACO")
-
+    >>> from astropy import units as u
+    >>> import hmbp
+    >>>
+    >>> hmbp.convert(
+    ...     20*u.mag, u.Jy, filter_name="Mp",
+    ...     observatory="Paranal", instrument="NACO",
+    ... ).round(8)
+    <Quantity 1.59e-06 Jy>
 
     See Also
     --------
@@ -93,19 +95,22 @@ def for_flux_in_filter(filter_name, flux, instrument=None, observatory=None,
 
     Examples
     --------
-    Find the number of photons emitted by Vega in V band [ph s-1 m-2]::
+    Find the number of photons emitted by Vega in V band [ph s-1 m-2]:
 
-        >>> from astropy import units as u
-        >>> import hmbp
-        >>>
-        >>> hmbp.in_zero_vega_mags("V")
+    >>> from astropy import units as u
+    >>> import hmbp
+    >>>
+    >>> hmbp.in_zero_vega_mags("V").round(-5)
+    <Quantity 8.7941e+09 ph / (s m2)>
 
     Find the number of photons emitted by a Ks=20 [ABmag] point source through
-    the HAWKI Ks filter::
+    the HAWKI Ks filter:
 
-        >>> hmbp.for_flux_in_filter(filter_name="Ks", flux=20*u.ABmag,
-        >>>                         observatory="Paranal",
-        >>>                         instrument="HAWKI")
+    >>> hmbp.for_flux_in_filter(
+    ...     filter_name="Ks", flux=20*u.ABmag,
+    ...     observatory="Paranal", instrument="HAWKI",
+    ... ).round()
+    <Quantity 68. ph / (s m2)>
 
     See Also
     --------
@@ -182,17 +187,21 @@ def in_skycalc_background(filter_name, instrument=None, observatory=None,
     --------
     Find the number of photons emitted by the sky in Ks [ph s-1 m-2 arcsec-2]::
 
-        >>> from astropy import units as u
-        >>> import hmbp
-        >>>
-        >>> hmbp.in_skycalc_background("Ks")
+    >>> from astropy import units as u
+    >>> import hmbp
+    >>>
+    >>> hmbp.in_skycalc_background("Ks").round()
+    <Quantity 946. ph / (s m2)>
 
     Find the number of photons emitted by the sky in the M-prime filter as used
     by NACO (back in the day) at airmass of 2.0 and PWV or 5.0 mm::
 
-        >>> hmbp.in_skycalc_background("Mp", instrument="NACO",
-                                       observatory="Paranal",
-                                       airmass=2.0, pwv=5.0)
+    >>> hmbp.in_skycalc_background(
+    ...     "Mp", instrument="NACO",
+    ...     observatory="Paranal",
+    ...     airmass=2.0, pwv=5.0,
+    ... ).round(-5)
+    <Quantity 1.564e+08 ph / (s m2)>
 
     See Also
     --------
