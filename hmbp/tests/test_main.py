@@ -111,7 +111,7 @@ class TestInSkyCalcBackground:
             pytest.param("MIDI.Nband", -2.29, marks=pytest.mark.xfail(reason="Off by 50 % for unknown reasons.")),
         ],
     )
-    def test_returns_expected_sky_bg_counts(self, filter_name, sky_mag):  # 22 warnings
+    def test_returns_expected_sky_bg_counts(self, filter_name, sky_mag):
         obs, inst, filt = None, None, filter_name
         if "." in filter_name:
             obs = "Paranal"
@@ -126,13 +126,13 @@ class TestInSkyCalcBackground:
 
         npt.assert_allclose(skycalc_phs, vega_phs, rtol=0.15)
 
-    def test_returns_different_values_for_different_airmasses(self):  # 2 warnings
+    def test_returns_different_values_for_different_airmasses(self):
         am1_phs = hmbp.in_skycalc_background("M", airmass=1.0)
         am2_phs = hmbp.in_skycalc_background("M", airmass=2.0)
         npt.assert_allclose(am2_phs, 1.5 * am1_phs, rtol=0.04)
 
     @pytest.mark.plottest
-    def test_plot_skycalc_spectrum_and_filters(self):  # 2 warnings
+    def test_plot_skycalc_spectrum_and_filters(self):
         import skycalc_ipy
         import numpy as np
         import matplotlib.pyplot as plt
@@ -146,7 +146,7 @@ class TestInSkyCalcBackground:
         plt.loglog(wave, sky_flux(wave))
         plt.show()
 
-    def test_override_filter_name_with_spectral_element(self):  # 2 warnings
+    def test_override_filter_name_with_spectral_element(self):
         wave = [1.99, 2.0, 2.3, 2.31] * u.um
         trans = [0, 0.8, 0.8, 0]
         filt = SpectralElement(Empirical1D, points=wave, lookup_table=trans)
