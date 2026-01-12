@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""."""
+"""Main (and only) module here."""
 
 import numpy as np
 from astropy import units as u
@@ -12,12 +12,17 @@ from scopesim.source import source_templates as st
 FILTER_DEFAULTS = tcu.FILTER_DEFAULTS
 
 
-def convert(from_quantity, to_unit, filter_name,
-            instrument=None, observatory=None):
+def convert(
+    from_quantity: u.Quantity,
+    to_unit: u.Unit,
+    filter_name: str,
+    instrument: str | None = None,
+    observatory: str | None = None,
+) -> u.Quantity:
     """
     Convert units within a certain instrument filters.
 
-    If ``filter_name`` is not a generic name as listed in
+    If `filter_name` is not a generic name as listed in
     ``hmbp.FILTER_DEFAULTS``, the instrument and observatory must be given as
     per the name definitions in the Spanish VO filter service.
 
@@ -34,7 +39,7 @@ def convert(from_quantity, to_unit, filter_name,
     Returns
     -------
     new_flux : astropy.Quantity
-        FLux is units of ``to_unit``
+        FLux is units of `to_unit`.
 
     Examples
     --------
@@ -54,12 +59,15 @@ def convert(from_quantity, to_unit, filter_name,
     http://svo2.cab.inta-csic.es/theory/fps/
 
     """
-    base_fn = {u.mag: in_zero_vega_mags,
-               u.ABmag: in_zero_AB_mags,
-               u.Jy: in_one_jansky}[to_unit]
+    base_fn = {
+        u.mag: in_zero_vega_mags,
+        u.ABmag: in_zero_AB_mags,
+        u.Jy: in_one_jansky,
+    }[to_unit]
     to_phs = base_fn(filter_name, instrument, observatory)
-    from_phs = for_flux_in_filter(filter_name, from_quantity, instrument,
-                                  observatory)
+    from_phs = for_flux_in_filter(
+        filter_name, from_quantity, instrument, observatory
+    )
 
     scale_factor = (from_phs / to_phs).value
     if to_unit in [u.mag, u.ABmag]:
@@ -70,13 +78,18 @@ def convert(from_quantity, to_unit, filter_name,
     return new_flux
 
 
-def for_flux_in_filter(filter_name, flux, instrument=None, observatory=None,
-                       override_spectrum=None):
+def for_flux_in_filter(
+    filter_name: str,
+    flux: u.Quantity | float,
+    instrument: str | None = None,
+    observatory: str | None = None,
+    override_spectrum: SourceSpectrum | None = None,
+) -> u.Quantity[u.ph/u.s/u.m**2] | u.Quantity[u.ph/u.s/u.m**2/u.arcsec**2]:
     """
     Return the number of photons in a given filter at a given magnitude.
 
     Filter anme, instrument, and observatory are as per the Spanish VO filter
-    service name
+    service name.
 
     Parameters
     ----------
@@ -118,8 +131,11 @@ def for_flux_in_filter(filter_name, flux, instrument=None, observatory=None,
 
     """
     if isinstance(filter_name, str):
-        if observatory is None and instrument is None and \
-                filter_name in FILTER_DEFAULTS:
+        if (
+            observatory is None
+            and instrument is None
+            and filter_name in FILTER_DEFAULTS
+        ):
             svo_str = FILTER_DEFAULTS[filter_name]
         else:
             svo_str = f"{observatory}/{instrument}.{filter_name}"
@@ -132,7 +148,9 @@ def for_flux_in_filter(filter_name, flux, instrument=None, observatory=None,
     else:
         spec_template = st.vega_spectrum
         if isinstance(flux, u.Quantity):
-            if flux.unit.physical_type == "spectral flux density":  # ABmag and Jy
+            if (
+                flux.unit.physical_type == "spectral flux density"
+            ):  # ABmag and Jy
                 spec_template = st.ab_spectrum
                 flux = flux.to(u.ABmag)
             flux = flux.value
@@ -141,20 +159,32 @@ def for_flux_in_filter(filter_name, flux, instrument=None, observatory=None,
     wave = max(filt.waveset, spec.waveset, key=len)
     dwave = 0.5 * (np.r_[[0], np.diff(wave)] + np.r_[np.diff(wave), [0]])
     flux = spec(wave) * filt(wave) * dwave  # ph/s/cm2
-    n_ph = np.sum(flux.to(u.ph / u.s / u.m ** 2))
+    n_ph = np.sum(flux.to(u.ph / u.s / u.m**2))
 
     return n_ph
 
 
-def in_zero_vega_mags(filter_name, instrument=None, observatory=None):
+def in_zero_vega_mags(
+    filter_name: str,
+    instrument: str | None = None,
+    observatory: str | None = None,
+) -> u.Quantity[u.ph / u.s / u.m**2]:
     return for_flux_in_filter(filter_name, 0, instrument, observatory)
 
 
-def in_zero_AB_mags(filter_name, instrument=None, observatory=None):
+def in_zero_AB_mags(
+    filter_name: str,
+    instrument: str | None = None,
+    observatory: str | None = None,
+) -> u.Quantity[u.ph / u.s / u.m**2]:
     return for_flux_in_filter(filter_name, 0 * u.ABmag, instrument, observatory)
 
 
-def in_one_jansky(filter_name, instrument=None, observatory=None):
+def in_one_jansky(
+    filter_name: str,
+    instrument: str | None = None,
+    observatory: str | None = None,
+) -> u.Quantity[u.ph / u.s / u.m**2]:
     return for_flux_in_filter(filter_name, 1 * u.Jy, instrument, observatory)
 
 
@@ -163,8 +193,12 @@ in_zero_AB_mags.__doc__ = for_flux_in_filter.__doc__
 in_one_jansky.__doc__ = for_flux_in_filter.__doc__
 
 
-def in_skycalc_background(filter_name, instrument=None, observatory=None,
-                          **kwargs):
+def in_skycalc_background(
+    filter_name: str,
+    instrument: str | None = None,
+    observatory: str | None = None,
+    **kwargs,
+) -> u.Quantity[u.ph / u.s / u.m**2 / u.arcsec**2]:
     """
     Return the expected number of sky photons in a filter via ESO SkyCalc.
 
@@ -209,18 +243,23 @@ def in_skycalc_background(filter_name, instrument=None, observatory=None,
     https://www.eso.org/observing/etc/doc/skycalc/helpskycalccli.html
 
     """
-    params = {"wmin": 300.,     # [nm]
-              "wmax": 30000.,   # [nm]
-              "wgrid_mode": 'fixed_spectral_resolution',
-              "wres": 5000,     # wave/dwave
-              }
+    params = {
+        "wmin": 300.0,  # [nm]
+        "wmax": 30000.0,  # [nm]
+        "wgrid_mode": "fixed_spectral_resolution",
+        "wres": 5000,  # wave/dwave
+    }
     params.update(kwargs)
     skycalc = skycalc_ipy.SkyCalc()
     skycalc.values.update(params)
     _, sky_flux = skycalc.get_sky_spectrum(return_type="synphot")
 
-    n_ph = for_flux_in_filter(filter_name=filter_name, flux=None,
-                              instrument=instrument, observatory=observatory,
-                              override_spectrum=sky_flux)
+    n_ph = for_flux_in_filter(
+        filter_name=filter_name,
+        flux=None,
+        instrument=instrument,
+        observatory=observatory,
+        override_spectrum=sky_flux,
+    )
 
     return n_ph
