@@ -51,8 +51,7 @@ class TestInZeroVegaMags:
 
 @pytest.mark.webtest
 class TestInOneJansky:
-    @pytest.mark.parametrize("filter_name, vega_ab",
-                             [("I", 0.45), ("H", 1.39)])
+    @pytest.mark.parametrize("filter_name, vega_ab", [("I", 0.45), ("H", 1.39)])
     def test_returns_scaled_counts_to_vega_mags(self, filter_name, vega_ab):
         scale_factor = 10 ** (-0.4 * vega_ab)
         vega_phs = hmbp.in_zero_vega_mags(filter_name) / 3631 / scale_factor
@@ -100,15 +99,33 @@ class TestInSkyCalcBackground:
             ("B", 21.14),
             ("V", 20.67),
             ("R", 20.32),
-            pytest.param("I", 19.48, marks=pytest.mark.xfail(reason="Off by 20 % for unknown reasons.")),
+            pytest.param(
+                "I",
+                19.48,
+                marks=pytest.mark.xfail(
+                    reason="Off by 20 % for unknown reasons."
+                ),
+            ),
             # Paranal/NACO
             ("NACO.J", 16.87),
             ("NACO.H", 14.43),
             ("NACO.Ks", 15.23),
-            pytest.param("NACO.Lp", 6.0, marks=pytest.mark.xfail(reason="Off by 70 % for unknown reasons.")),
-           ("NACO.Mp", 1.14),
+            pytest.param(
+                "NACO.Lp",
+                6.0,
+                marks=pytest.mark.xfail(
+                    reason="Off by 70 % for unknown reasons."
+                ),
+            ),
+            ("NACO.Mp", 1.14),
             # Paranal/MIDI
-            pytest.param("MIDI.Nband", -2.29, marks=pytest.mark.xfail(reason="Off by 50 % for unknown reasons.")),
+            pytest.param(
+                "MIDI.Nband",
+                -2.29,
+                marks=pytest.mark.xfail(
+                    reason="Off by 50 % for unknown reasons."
+                ),
+            ),
         ],
     )
     def test_returns_expected_sky_bg_counts(self, filter_name, sky_mag):
@@ -142,7 +159,7 @@ class TestInSkyCalcBackground:
         # skycalc.values.update(kwargs)
         sky_trans, sky_flux = skycalc.get_sky_spectrum(return_type="synphot")
 
-        wave = np.linspace(0.3, 14, 1000)*u.um
+        wave = np.linspace(0.3, 14, 1000) * u.um
         plt.loglog(wave, sky_flux(wave))
         plt.show()
 
