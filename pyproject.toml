@@ -55,8 +55,6 @@ markers = [
 filterwarnings = [
     "error",
     # Seem to come from skycalc_ipy, should fix there...
-    "default:'ph/s/m2/micron/arcsec2':astropy.units.core.UnitsWarning",
-    "default:'1':astropy.units.core.UnitsWarning",
     "ignore::ResourceWarning",
 ]
 
