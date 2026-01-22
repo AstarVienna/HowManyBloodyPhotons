@@ -18,17 +18,17 @@ class TestForMagnitudeInFilter:
         vega_phs = hmbp.for_flux_in_filter("Ks", 30 * u.mag)
         ab_phs = hmbp.for_flux_in_filter("Ks", 30 * u.ABmag)
         scale_factor = 10 ** (-0.4 * 1.85)
-        npt.assert_allclose(vega_phs, ab_phs * scale_factor, rtol=0.02)
+        npt.assert_allclose(vega_phs, ab_phs * scale_factor, rtol=0.006)
 
     def test_ABmag_and_Jansky_are_compatible(self):
         ab_phs = hmbp.for_flux_in_filter("J", 0 * u.ABmag)
         jy_phs = hmbp.for_flux_in_filter("J", 3631 * u.Jy)
-        npt.assert_allclose(ab_phs, jy_phs, rtol=0.02)
+        npt.assert_allclose(ab_phs, jy_phs, rtol=1e-4)
 
     def test_ABmag_and_milliJansky_are_compatible(self):
         ab_phs = hmbp.for_flux_in_filter("J", 0 * u.ABmag)
         jy_phs = hmbp.for_flux_in_filter("J", 3631e3 * u.mJy)
-        npt.assert_allclose(ab_phs, jy_phs, rtol=0.02)
+        npt.assert_allclose(ab_phs, jy_phs, rtol=1e-4)
 
     @pytest.mark.webtest
     def test_runs_for_all_default_filters(self, subtests):
@@ -38,7 +38,6 @@ class TestForMagnitudeInFilter:
                 assert hmbp.for_flux_in_filter(filter_name, 0) > zeroflux
 
 
-@pytest.mark.xfail(reason="Off by 13-25 % for unknown reasons.")
 class TestInZeroVegaMags:
     @pytest.mark.parametrize(
         "filter_name, ph_exp", [("J", 2.56e9), ("H", 2.76e9), ("Ks", 1.27e9)]
@@ -47,13 +46,12 @@ class TestInZeroVegaMags:
         vega_phs = hmbp.in_zero_vega_mags(
             filter_name, "HAWKI", "Paranal"
         ).to_value(u.ph / u.s / u.m**2)
-        npt.assert_allclose(vega_phs, ph_exp, rtol=0.02)
+        npt.assert_allclose(vega_phs, ph_exp, rtol=0.002)
 
 
 @pytest.mark.webtest
 class TestInOneJansky:
-    @pytest.mark.parametrize("filter_name, vega_ab",
-                             [("I", 0.45), ("H", 1.39)])
+    @pytest.mark.parametrize("filter_name, vega_ab", [("I", 0.45), ("H", 1.39)])
     def test_returns_scaled_counts_to_vega_mags(self, filter_name, vega_ab):
         scale_factor = 10 ** (-0.4 * vega_ab)
         vega_phs = hmbp.in_zero_vega_mags(filter_name) / 3631 / scale_factor
@@ -73,20 +71,8 @@ class TestConvert:
     @pytest.mark.parametrize(
         "filter_name, diff",
         [
-            pytest.param(
-                "J",
-                0.93,
-                marks=pytest.mark.xfail(
-                    reason="Off by 18.5 % for unknown reasons."
-                ),
-            ),
-            pytest.param(
-                "H",
-                1.34,
-                marks=pytest.mark.xfail(
-                    reason="Off by 6 % for unknown reasons."
-                ),
-            ),
+            ("J", 0.93),
+            ("H", 1.34),
             ("Ks", 1.85),
         ],
     )
@@ -107,22 +93,42 @@ class TestInSkyCalcBackground:
     # Sky mags taken from skycalc with default values from website
     @pytest.mark.parametrize(
         "filter_name, sky_mag",
-        # Magnitudes that work  # Original magnitudes from ESO skycalc
         [
-            ("U", 20.7),  # [20.76] Generic/Bessel.U
-            ("B", 21.0),  # [21.14]
-            ("V", 20.6),  # [20.67]
-            pytest.param("R", 20.3, marks=pytest.mark.xfail(reason="Off by 8 % for unknown reasons.")),  # [20.32]
-            pytest.param("I", 19.5, marks=pytest.mark.xfail(reason="Off by 23 % for unknown reasons.")),  # [19.48]
-            pytest.param("NACO.J", 17.3, marks=pytest.mark.xfail(reason="Off by 214842053 % for unknown reasons.")),  # [16.87] Paranal/NACO.J
-            pytest.param("NACO.H", 15.3, marks=pytest.mark.xfail(reason="Off by 88661246 % for unknown reasons.")),  # [14.43]
-            pytest.param("NACO.Ks", 15.1, marks=pytest.mark.xfail(reason="Off by 44322087 % for unknown reasons.")),  # [15.23]
-            pytest.param("NACO.Lp", 5.3, marks=pytest.mark.xfail(reason="Off by 10515 % for unknown reasons.")),  # [6.00]
-            pytest.param("NACO.Mp", 1.2, marks=pytest.mark.xfail(reason="Off by 240 % for unknown reasons.")),  # [1.14]
-            pytest.param("MIDI.Nband", -2.7, marks=pytest.mark.xfail(reason="Off by 7.4 % for unknown reasons.")),  # [-2.29] Paranal/MIDI.Nband
+            # Generic/Bessel
+            ("U", 20.76),
+            ("B", 21.14),
+            ("V", 20.67),
+            ("R", 20.32),
+            pytest.param(
+                "I",
+                19.48,
+                marks=pytest.mark.xfail(
+                    reason="Off by 20 % for unknown reasons."
+                ),
+            ),
+            # Paranal/NACO
+            ("NACO.J", 16.87),
+            ("NACO.H", 14.43),
+            ("NACO.Ks", 15.23),
+            pytest.param(
+                "NACO.Lp",
+                6.0,
+                marks=pytest.mark.xfail(
+                    reason="Off by 70 % for unknown reasons."
+                ),
+            ),
+            ("NACO.Mp", 1.14),
+            # Paranal/MIDI
+            pytest.param(
+                "MIDI.Nband",
+                -2.29,
+                marks=pytest.mark.xfail(
+                    reason="Off by 50 % for unknown reasons."
+                ),
+            ),
         ],
     )
-    def test_returns_expected_sky_bg_counts(self, filter_name, sky_mag):  # 22 warnings
+    def test_returns_expected_sky_bg_counts(self, filter_name, sky_mag):
         obs, inst, filt = None, None, filter_name
         if "." in filter_name:
             obs = "Paranal"
@@ -135,15 +141,15 @@ class TestInSkyCalcBackground:
             filt, sky_mag * u.mag, instrument=inst, observatory=obs
         )
 
-        npt.assert_allclose(skycalc_phs, vega_phs, rtol=0.05)
+        npt.assert_allclose(skycalc_phs, vega_phs, rtol=0.15)
 
-    @pytest.mark.xfail(reason="Off by 24 % for unknown reasons.")
-    def test_returns_different_values_for_different_airmasses(self):  # 2 warnings
+    def test_returns_different_values_for_different_airmasses(self):
         am1_phs = hmbp.in_skycalc_background("M", airmass=1.0)
         am2_phs = hmbp.in_skycalc_background("M", airmass=2.0)
-        npt.assert_allclose(am2_phs, 1.5 * am1_phs, rtol=0.1)
+        npt.assert_allclose(am2_phs, 1.5 * am1_phs, rtol=0.04)
 
-    def test_plot_skycalc_spectrum_and_filters(self):  # 2 warnings
+    @pytest.mark.plottest
+    def test_plot_skycalc_spectrum_and_filters(self):
         import skycalc_ipy
         import numpy as np
         import matplotlib.pyplot as plt
@@ -153,14 +159,14 @@ class TestInSkyCalcBackground:
         # skycalc.values.update(kwargs)
         sky_trans, sky_flux = skycalc.get_sky_spectrum(return_type="synphot")
 
-        wave = np.linspace(0.3, 14, 1000)*u.um
+        wave = np.linspace(0.3, 14, 1000) * u.um
         plt.loglog(wave, sky_flux(wave))
         plt.show()
 
-    def test_override_filter_name_with_spectral_element(self):  # 2 warnings
+    def test_override_filter_name_with_spectral_element(self):
         wave = [1.99, 2.0, 2.3, 2.31] * u.um
         trans = [0, 0.8, 0.8, 0]
         filt = SpectralElement(Empirical1D, points=wave, lookup_table=trans)
         custom_phs = hmbp.in_skycalc_background(filt)
         ks_phs = hmbp.in_skycalc_background("Ks")
-        npt.assert_allclose(ks_phs, custom_phs, rtol=0.05)
+        npt.assert_allclose(ks_phs, custom_phs, rtol=0.03)

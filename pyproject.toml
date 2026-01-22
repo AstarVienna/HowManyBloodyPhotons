@@ -1,6 +1,6 @@
 [project]
 name = "HowManyPhotons"
-version = "0.4.0a0"
+version = "0.4.0a1"
 description = "Simple photon count utility for astronomical fluxes"
 license = {text = "GPL-3.0-or-later"}
 authors = [
@@ -20,8 +20,8 @@ dependencies = [
     "pyyaml (>=6.0.3,<7.0.0)",
     "synphot (>=1.5.0,<2.0.0)",
 
-    "skycalc-ipy (>=0.6.0,<1.0)",
-    "scopesim (>=0.11.1,<1.0)",
+    "skycalc-ipy (>=0.7.0,<1.0)",
+    "scopesim (>=0.11.2,<1.0)",
 ]
 
 [project.urls]
@@ -47,9 +47,15 @@ requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.pytest.ini_options]
-addopts = "--strict-markers"
+addopts = "--strict-markers -m 'not plottest'"
 markers = [
     "webtest: marks tests as requiring network (deselect with '-m \"not webtest\"')",
+    "plottest: test which only produce plot(s), deselected by default"
+]
+filterwarnings = [
+    "error",
+    # Seem to come from skycalc_ipy, should fix there...
+    "ignore::ResourceWarning",
 ]
 
 [tool.coverage.report]
